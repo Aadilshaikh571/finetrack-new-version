@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/header/Header";
 import Cards from "../components/cards/Card";
-import { Modal } from "antd";
 import AddIncome from "../components/modals/AddIncome";
 import AddExpense from "../components/modals/AddExpense";
 import moment from "moment";
@@ -13,86 +12,53 @@ import TransactionTable from "../components/transactionTables/TransactionTable";
 import ChartComponent from "../components/charts/Chart";
 import NoTransactions from "../components/modals/NoTransactions";
 import Footer from "../components/header/Footer";
-import { Navigate } from "react-router-dom";
+import "./dashboard.css";
 
 const DashboardPage = () => {
   const [user] = useAuthState(auth);
-  // const sampleTransactions = [
-  // {
-  //   name: "Pay day",
-  //   type: "income",
-  //   date: "2023-01-15",
-  //   amount: 2000,
-  //   tag: "salary",
-  // },
-  // {
-  //   name: "Dinner",
-  //   type: "expense",
-  //   date: "2023-01-20",
-  //   amount: 500,
-  //   tag: "food",
-  // },
-  // {
-  //   name: "Books",
-  //   type: "expense",
-  //   date: "2023-01-25",
-  //   amount: 300,
-  //   tag: "education",
-  // },
-  // ];
+
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
+
   const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
-  const [totalBalance, settotalBalance] = useState(0);
+
+  const [totalBalance, setTotalBalance] = useState(0);
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
 
-  const showExpenseModal = () => {
-    setIsExpenseModalVisible(true);
-  };
+  const [alertShown, setAlertShown] = useState(false);
 
-  const showIncomeModal = () => {
-    setIsIncomeModalVisible(true);
-  };
-
-  const handleExpenseCancel = () => {
-    setIsExpenseModalVisible(false);
-  };
-
-  const handleIncomeCancel = () => {
-    setIsIncomeModalVisible(false);
-  };
-  // adding a data to collections
+  const showExpenseModal = () => setIsExpenseModalVisible(true);
+  const showIncomeModal = () => setIsIncomeModalVisible(true);
+  const handleExpenseCancel = () => setIsExpenseModalVisible(false);
+  const handleIncomeCancel = () => setIsIncomeModalVisible(false);
 
   const onFinish = (values, type) => {
     const newTransaction = {
-      type: type,
+      type,
       date: moment(values.date).format("YYYY-MM-DD"),
       amount: parseFloat(values.amount),
       tag: values.tag,
       name: values.name,
     };
-
     addTransaction(newTransaction);
   };
+
   async function addTransaction(transaction, many) {
     try {
-      const docRef = await addDoc(
+      await addDoc(
         collection(db, `users/${user.uid}/transactions`),
         transaction
       );
-      console.log("Document written with ID: ", docRef.id);
 
-      if (!many) toast.success("Transaction Added!",{
-        position:"top-center"
-      });
-      setTransactions((prevTransactions) => [...prevTransactions, transaction]);
+      if (!many) {
+        toast.success("Transaction Added!", { position: "top-center" });
+      }
+
+      setTransactions((prev) => [...prev, transaction]);
     } catch (e) {
-      console.error("Error adding document: ", e);
-      if (!many) toast.error("Couldn't add transaction",{
-        position:"top-center"
-      });
+      toast.error("Couldn't add transaction", { position: "top-center" });
     }
   }
 
@@ -108,17 +74,35 @@ const DashboardPage = () => {
     let incomeTotal = 0;
     let expensesTotal = 0;
 
-    transactions.forEach((transaction) => {
-      if (transaction.type === "income") {
-        incomeTotal += transaction.amount;
+    transactions.forEach((t) => {
+      if (t.type === "income") {
+        incomeTotal += t.amount;
       } else {
-        expensesTotal += transaction.amount;
+        expensesTotal += t.amount;
       }
     });
 
     setIncome(incomeTotal);
     setExpenses(expensesTotal);
-    settotalBalance(incomeTotal - expensesTotal);
+    setTotalBalance(incomeTotal - expensesTotal);
+
+    // 🚨 EXPENSE ALERT
+    const EXPENSE_LIMIT = 10000;
+
+    if (expensesTotal > EXPENSE_LIMIT && !alertShown) {
+      toast.warning(
+        `⚠️ High Spending Alert! You have spent ₹${expensesTotal}`,
+        {
+          position: "top-right",
+          autoClose: 5000,
+        }
+      );
+      setAlertShown(true);
+    }
+
+    if (expensesTotal <= EXPENSE_LIMIT) {
+      setAlertShown(false);
+    }
   }
 
   async function fetchTransactions() {
@@ -126,60 +110,71 @@ const DashboardPage = () => {
     if (user) {
       const q = query(collection(db, `users/${user.uid}/transactions`));
       const querySnapshot = await getDocs(q);
-      let transactionsArray = [];
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        transactionsArray.push(doc.data());
-      });
-      setTransactions(transactionsArray);
-      console.log("transaction", transactionsArray);
-      toast.success("Transactions Fetched!",{
-        position:"top-center"
-      });
+      let data = [];
+      querySnapshot.forEach((doc) => data.push(doc.data()));
+      setTransactions(data);
     }
     setLoading(false);
   }
 
-  let sortedTransaction = transactions.sort((a, b) => {
-    return new Date(a.date) - new Date(b.date);
-  });
+  const sortedTransaction = [...transactions].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+
   return (
-    <div>
-    
+    <div className="dashboard-wrapper">
       <Header />
-    
-      {loading ? (
-        <>
-          <p>Loading....</p>
-        </>
-      ) : (
-        <>
-          <Cards
-            income={income}
-            expenses={expenses}
-            totalBalance={totalBalance}
-            showExpenseModal={showExpenseModal}
-            showIncomeModal={showIncomeModal}
-          />
-          {transactions != [] ? <ChartComponent sortedTransaction={sortedTransaction} /> : <NoTransactions />}
-          <AddExpense
-            isExpenseModalVisible={isExpenseModalVisible}
-            handleExpenseCancel={handleExpenseCancel}
-            onFinish={onFinish}
-          />
-          <AddIncome
-            isIncomeModalVisible={isIncomeModalVisible}
-            handleIncomeCancel={handleIncomeCancel}
-            onFinish={onFinish}
-          />
-          <TransactionTable
-            transaction={transactions}
-            addTransactions={addTransaction}
-            fetchTransactions={fetchTransactions}
-          />
-        </>
-      )}
-      <Footer/>
+
+      <main className="dashboard-container">
+        {loading ? (
+          <div className="dashboard-loading">Loading Dashboard...</div>
+        ) : (
+          <>
+            {/* SUMMARY */}
+            <section className="dashboard-section">
+              <Cards
+                income={income}
+                expenses={expenses}
+                totalBalance={totalBalance}
+                showExpenseModal={showExpenseModal}
+                showIncomeModal={showIncomeModal}
+              />
+            </section>
+
+            {/* CHART */}
+            <section className="dashboard-section glass">
+              {transactions.length > 0 ? (
+                <ChartComponent sortedTransaction={sortedTransaction} />
+              ) : (
+                <NoTransactions />
+              )}
+            </section>
+
+            {/* TABLE */}
+            <section className="dashboard-section">
+              <TransactionTable
+                transaction={transactions}
+                addTransactions={addTransaction}
+                fetchTransactions={fetchTransactions}
+              />
+            </section>
+
+            {/* MODALS */}
+            <AddExpense
+              isExpenseModalVisible={isExpenseModalVisible}
+              handleExpenseCancel={handleExpenseCancel}
+              onFinish={onFinish}
+            />
+            <AddIncome
+              isIncomeModalVisible={isIncomeModalVisible}
+              handleIncomeCancel={handleIncomeCancel}
+              onFinish={onFinish}
+            />
+          </>
+        )}
+      </main>
+
+      <Footer />
     </div>
   );
 };

@@ -1,0 +1,58 @@
+/* PAGE BACKGROUND */
+body {
+  background: #f4f6f9;
+}
+
+/* WRAPPER */
+.dashboard-wrapper {
+  min-height: 100vh;
+}
+
+/* MAIN CONTAINER */
+.dashboard-container {
+  max-width: 1100px;
+  margin: 30px auto 60px;
+  padding: 0 20px;
+}
+
+/* SECTION SPACING */
+.dashboard-section {
+  margin-bottom: 28px;
+}
+
+/* LOADING */
+.dashboard-loading {
+  text-align: center;
+  padding: 100px 0;
+  font-size: 18px;
+  color: #475569;
+}
+
+/* REMOVE GLASS FEEL COMPLETELY */
+.glass {
+  background: #ffffff;
+  border-radius: 16px;
+  height: auto;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+/* CHART LOOK CLEAN */
+.glass canvas {
+  max-height: 280px;
+}
+
+/* TABLE LOOK */
+table {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin-top: 20px;
+    padding: 0 14px;
+  }
+}

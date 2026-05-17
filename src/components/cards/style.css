@@ -1,21 +1,95 @@
-.my-card {
-  box-shadow: var(--shadow);
-  min-width:350px;
-  border-radius: 0.5rem;
-  font-family: "Montserrate", sans-serif;
-  margin: 1rem;
-  flex: 1;
+.kpi-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
 }
-.ant-card-head-title {
-  font-weight: 700;
+
+/* BASE CARD */
+.kpi-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.my-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 90%;
-    margin: 2rem auto;
-    gap: 1rem; /* Adjust the value to set the spacing you prefer */
-    flex-wrap: wrap;
-    gap: 16px;
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADER */
+.kpi-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #475569;
+  font-size: 14px;
+}
+
+/* DOTS */
+.kpi-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.blue {
+  background: #2563eb;
+}
+.green {
+  background: #16a34a;
+}
+.red {
+  background: #dc2626;
+}
+
+/* VALUE */
+.kpi-card h2 {
+  font-size: 32px;
+  margin: 18px 0 6px;
+  color: #0f172a;
+}
+
+/* SUBTEXT */
+.kpi-sub {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* BUTTON */
+.kpi-btn {
+  margin-top: 14px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+}
+
+.kpi-btn.outline {
+  background: transparent;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+}
+
+/* VARIANTS */
+.neutral {
+  border-top: 4px solid #2563eb;
+}
+.success {
+  border-top: 4px solid #16a34a;
+}
+.danger {
+  border-top: 4px solid #dc2626;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .kpi-card h2 {
+    font-size: 28px;
   }
+}

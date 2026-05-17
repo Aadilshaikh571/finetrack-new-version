@@ -1,7 +1,12 @@
-.wrapper{
+/* .wrapper{
     display: flex;
     justify-content: center;
     align-items: center;
     width: 90vw;
     height: 90vh;
+} */
+body {
+  background: #eef2f6;   /* soft neutral grey */
+  margin: 0;
+  padding: 0;
 }

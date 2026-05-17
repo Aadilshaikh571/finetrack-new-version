@@ -1,4 +1,5 @@
 import React from "react";
+import { incomeCategories } from "../constants/categories";
 import {
   Card,
   Col,
@@ -11,11 +12,7 @@ import {
   Select,
 } from "antd";
 
-function AddIncome({
-  isIncomeModalVisible,
-  handleIncomeCancel,
-  onFinish,
-}) {
+function AddIncome({ isIncomeModalVisible, handleIncomeCancel, onFinish }) {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -67,18 +64,23 @@ function AddIncome({
           <DatePicker format="YYYY-MM-DD" className="custom-input" />
         </Form.Item>
         <Form.Item
-          style={{ fontWeight: 600 }}
           label="Tag"
           name="tag"
+          style={{ fontWeight: 600 }}
           rules={[{ required: true, message: "Please select a tag!" }]}
         >
-          <Select className="select-input-2">
-            <Select.Option value="salary">Salary</Select.Option>
-            <Select.Option value="freelance">Freelance</Select.Option>
-            <Select.Option value="investment">Investment</Select.Option>
-            {/* Add more tags here */}
+          <Select
+            className="select-input-2"
+            placeholder="Select income category"
+          >
+            {incomeCategories.map((category) => (
+              <Select.Option key={category} value={category}>
+                {category}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
+
         <Form.Item>
           <Button className="btn btn-blue" type="primary" htmlType="submit">
             Add Income

@@ -1,5 +1,6 @@
 import React from "react";
 import { Area, Rose } from "@ant-design/charts";
+import "./chart.css";
 
 const ChartComponent = ({ sortedTransaction }) => {
   const lineData = sortedTransaction.map((item) => ({
@@ -49,7 +50,10 @@ const ChartComponent = ({ sortedTransaction }) => {
       title: { text: "Date", style: { fontWeight: "bold", fontSize: 14 } },
     },
     yAxis: {
-      title: { text: "Amount ($)", style: { fontWeight: "bold", fontSize: 14 } },
+      title: {
+        text: "Amount ($)",
+        style: { fontWeight: "bold", fontSize: 14 },
+      },
       grid: { line: { style: { stroke: "#d3d3d3", lineDash: [4, 4] } } },
     },
   };
@@ -72,15 +76,10 @@ const ChartComponent = ({ sortedTransaction }) => {
     legend: { position: "bottom" },
     interactions: [{ type: "element-active" }],
   };
-  
-  
 
   return (
     <>
-      <div
-        className="wrapper charts-wrapper"
-        style={{ padding: "20px", background: "#f3f4f6", borderRadius: "8px" }}
-      >
+      <div className="wrapper charts-wrapper">
         <h2
           style={{
             textAlign: "center",
@@ -93,18 +92,11 @@ const ChartComponent = ({ sortedTransaction }) => {
         </h2>
         <Area {...areaConfig} />
       </div>
-      <div style={{ marginTop: "30px" }}>
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#374151",
-            fontSize: "1.5em",
-            marginBottom: "20px",
-          }}
-        >
-          Spending by Category (Rose Chart)
-        </h2>
-        <Rose {...roseConfig} />
+      <div className="chart-section">
+        <h3 className="chart-title">Spending by Category</h3>
+        <div className="chart-content">
+          <Rose {...roseConfig} />
+        </div>
       </div>
     </>
   );

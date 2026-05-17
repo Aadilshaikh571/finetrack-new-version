@@ -1,4 +1,6 @@
 import React from "react";
+import { expenseCategories } from "../constants/categories";
+
 import {
   Card,
   Col,
@@ -10,11 +12,7 @@ import {
   DatePicker,
   Select,
 } from "antd";
-function AddExpense({
-  isExpenseModalVisible,
-  handleExpenseCancel,
-  onFinish,
-}) {
+function AddExpense({ isExpenseModalVisible, handleExpenseCancel, onFinish }) {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -72,12 +70,14 @@ function AddExpense({
           rules={[{ required: true, message: "Please select a tag!" }]}
         >
           <Select className="select-input-2">
-            <Select.Option value="food">Food</Select.Option>
-            <Select.Option value="education">Education</Select.Option>
-            <Select.Option value="office">Office</Select.Option>
-            {/* Add more tags here */}
+            {expenseCategories.map((category) => (
+              <Select.Option key={category} value={category}>
+                {category}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
+
         <Form.Item>
           <Button className="btn btn-blue" type="primary" htmlType="submit">
             Add Expense

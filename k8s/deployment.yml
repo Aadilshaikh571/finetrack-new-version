@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finetrack-frontend
+  namespace: finetrack
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: finetrack-frontend
+  template:
+    metadata:
+      labels:
+        app: finetrack-frontend
+    spec:
+      containers:
+      - name: finetrack-frontend
+        image: prince571/finetrack:v3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+
+        envFrom:
+        - secretRef:
+            name: finetrack-secret
